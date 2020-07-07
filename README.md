@@ -12,4 +12,4 @@ A cell is considered _alive_ if it is on, and _dead_ if it is off. The rules are
 3. _Loneliness_: a live cell with fewer than two live neighbors dies and a dead cell with fewer than three live neighbors stays dead. 
 4. _Overcrowding_: a live or dead cell with more than three live neighbors dies or stays dead. 
 
-### How to play 
+### How to use the software
