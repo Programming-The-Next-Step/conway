@@ -7,6 +7,7 @@ from pygame.locals import *
 pygame.init()
 
 # Colors 
+grey = (210, 210, 210) # the grid lines 
 black = (0, 0, 0) # alive cells 
 white = (255, 255, 255) # dead cells 
 green = (0, 200, 0) # start button 
@@ -45,14 +46,14 @@ while running:
             running = False
 
         # to change from dead to alive and alive to dead 
-        elif click[0] == 1 and 0 <= i <= N: # if clicked and the mouse is on the grid
+        elif click[0] == 1 and 0 <= i <= (N - 1): # if clicked and the mouse is on the grid
             if X[i][j] == 0:
                 X[i][j] = 1
             elif X[i][j] == 1:
                 X[i][j] = 0
             
     # Set the screen background
-    screen.fill(black)
+    screen.fill(grey)
         
     # Draw the grid based on the matrix values
     for i in range(N):
@@ -88,33 +89,35 @@ while running:
     screen.blit(textSurf_1, textRect_1)
     screen.blit(textSurf_2, textRect_2)
     
-    # Add functionality to the buttons and applying Conway's rules
-    if 150 < mouse[0] < 150 + 100 and 538 < mouse[1] < 538 + 50:
-        if click[0] == 1:
-             for i in range(N):
+    # Adding functionality to the buttons
+    if 150 < mouse[0] < 150 + 100 and 538 < mouse[1] < 538 + 50 and click[0] == 1:
+        #275 < mouse[0] < 275 + 100 and 538 < mouse[1] < 538 + 50 and click[0] == 1:
+            for i in range(N):
                 for j in range(N):
+                    # calculating the activation of a cell's 8 neighbors
                     total_activation = int(
                         (X[i, (j - 1) % N] + 
                          X[i, (j + 1) % N] + 
                          X[(i - 1) % N, j] + 
-                         X[(i + 1) % N, j] + 
+                         X[(i + 1) % N, j] +
                          X[(i - 1) % N, (j - 1) % N] + 
                          X[(i - 1) % N, (j + 1) % N] + 
                          X[(i + 1) % N, (j - 1) % N] + 
                          X[(i + 1) % N, (j + 1) % N])
-                    ) 
-                    if (total_activation < 2) or (total_activation > 3): 
-                        X[i, j] = 0 
-                    elif total_activation == 3:
-                        X[i, j] = 1 
-            
-            #playing = True
-        
-    #elif 275 < mouse[0] < 275 + 100 and 538 < mouse[1] < 538 + 50:
-        #if click[0] == 1:
-            #playing = False 
-            
-
+                    )
+                    # applying Conway's 4 rules
+                    if X[i, j] == 0:
+                        if total_activation == 3: # birth 
+                            X[i, j] = 1
+                        else: 
+                            X[i, j] = 0 # loneliness 
+                    
+                    elif X[i, j] == 1:
+                        if (total_activation < 2) or (total_activation > 3): # loneliness & overcrowding 
+                            X[i, j] = 0
+                        else:
+                            X[i, j] = 1 # survival 
+                            
     # update the screen
     pygame.display.flip()
 
