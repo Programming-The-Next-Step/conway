@@ -12,8 +12,10 @@ black = (0, 0, 0) # alive cells
 white = (255, 255, 255) # dead cells 
 green = (0, 200, 0) # start button 
 red = (200, 0, 0) # stop button
+blue = (30, 144, 255)
 bright_green = (0, 255, 0) # to make the buttons light up when the mouse is over them
 bright_red = (255, 0, 0)
+bright_blue = (0, 191, 255)
 
 # The window
 window_width = 526
@@ -58,23 +60,30 @@ while running:
     # Draw the grid based on the matrix values
     for i in range(N):
         for j in range(N):
-            color = white
-            if X[i][j] == 1:
+            if X[i, j] == 0:
+                color = white
+            elif X[i][j] == 1:
                 color = black
             pygame.draw.rect(screen, color, ((cell_width + margin) * j + margin, # x-coordinates of the top-left hand corner 
                                              (cell_height + margin) * i + margin, # y-coordinates of the top-left hand corner
                                              cell_width, cell_height))
     
     # Draw the buttons, bright if the mouse is on the button 
-    if 150 < mouse[0] < 150 + 100 and 538 < mouse[1] < 538 + 50:
-        pygame.draw.rect(screen, bright_green, (150, 538, 100, 50))
+    if 50 < mouse[0] < 50 + 100 and 538 < mouse[1] < 538 + 50:
+        pygame.draw.rect(screen, bright_green, (50, 538, 100, 50))
     else: 
-        pygame.draw.rect(screen, green, (150, 538, 100, 50))
-        
-    if 275 < mouse[0] < 275 + 100 and 538 < mouse [1] < 538 + 50:
-        pygame.draw.rect(screen, bright_red, (275, 538, 100, 50))
+        pygame.draw.rect(screen, green, (50, 538, 100, 50))
+     
+    if 215 < mouse[0] < 215 + 100 and 538 < mouse [1] < 538 + 50:
+        pygame.draw.rect(screen, bright_red, (215, 538, 100, 50))
     else:
-        pygame.draw.rect(screen, red, (275, 538, 100, 50))
+        pygame.draw.rect(screen, red, (215, 538, 100, 50))
+        
+    if 376 < mouse[0] < 376 + 100 and 538 < mouse [1] < 538 + 50:
+        pygame.draw.rect(screen, bright_blue, (376, 538, 100, 50))
+    else:
+        pygame.draw.rect(screen, blue, (376, 538, 100, 50))
+    
     
     # Adding text to the buttons 
     def text_objects(text, font):
@@ -83,43 +92,50 @@ while running:
 
     text = pygame.font.Font("freesansbold.ttf", 20)
     textSurf_1, textRect_1 = text_objects("START", text)
-    textSurf_2, textRect_2 = text_objects("STOP", text)
-    textRect_1.center = ((150 + (100 / 2)), (538 + (50 / 2)))
-    textRect_2.center = ((275 + (100 / 2)), (538 + (50 / 2)))
+    textSurf_2, textRect_2 = text_objects("PAUSE", text)
+    textSurf_3, textRect_3 = text_objects("RESET", text)
+    textRect_1.center = ((50 + (100 / 2)), (538 + (50 / 2)))
+    textRect_2.center = ((215 + (100 / 2)), (538 + (50 / 2)))
+    textRect_3.center = ((376 + (100 / 2)), (538 + (50 / 2)))
     screen.blit(textSurf_1, textRect_1)
     screen.blit(textSurf_2, textRect_2)
+    screen.blit(textSurf_3, textRect_3)
     
     # Adding functionality to the buttons
-    if 150 < mouse[0] < 150 + 100 and 538 < mouse[1] < 538 + 50 and click[0] == 1:
-        #275 < mouse[0] < 275 + 100 and 538 < mouse[1] < 538 + 50 and click[0] == 1:
-            for i in range(N):
-                for j in range(N):
-                    # calculating the activation of a cell's 8 neighbors
-                    total_activation = int(
-                        (X[i, (j - 1) % N] + 
-                         X[i, (j + 1) % N] + 
-                         X[(i - 1) % N, j] + 
-                         X[(i + 1) % N, j] +
-                         X[(i - 1) % N, (j - 1) % N] + 
-                         X[(i - 1) % N, (j + 1) % N] + 
-                         X[(i + 1) % N, (j - 1) % N] + 
-                         X[(i + 1) % N, (j + 1) % N])
-                    )
-                    # applying Conway's 4 rules
-                    if X[i, j] == 0:
-                        if total_activation == 3: # birth 
-                            X[i, j] = 1
-                        else: 
-                            X[i, j] = 0 # loneliness 
+    if 50 < mouse[0] < 50 + 100 and 538 < mouse[1] < 538 + 50 and click[0] == 1:
+        for i in range(N):
+            for j in range(N):
+                # calculating the activation of a cell's 8 neighbors
+                total_activation = int(
+                    (X[i, (j - 1) % N] + 
+                     X[i, (j + 1) % N] + 
+                     X[(i - 1) % N, j] + 
+                     X[(i + 1) % N, j] +
+                     X[(i - 1) % N, (j - 1) % N] + 
+                     X[(i - 1) % N, (j + 1) % N] + 
+                     X[(i + 1) % N, (j - 1) % N] + 
+                     X[(i + 1) % N, (j + 1) % N])
+                )
+                # applying Conway's 4 rules
+                if X[i, j] == 0:
+                    if total_activation == 3: # birth 
+                        X[i, j] = 1
+                    else: 
+                        X[i, j] = 0 # loneliness 
                     
-                    elif X[i, j] == 1:
-                        if (total_activation < 2) or (total_activation > 3): # loneliness & overcrowding 
-                            X[i, j] = 0
-                        else:
-                            X[i, j] = 1 # survival 
-                            
+                elif X[i, j] == 1:
+                    if (total_activation < 2) or (total_activation > 3): # loneliness & overcrowding 
+                        X[i, j] = 0
+                    else:
+                        X[i, j] = 1 # survival 
+                        
+    elif 376 < mouse[0] < 376 + 100 and 538 < mouse[1] < 538 + 50 and click[0] == 1:
+        for i in range(N):
+            for j in range(N):
+                X[i, j] = 0
+    
     # update the screen
-    pygame.display.flip()
+    pygame.display.update()
 
 pygame.quit()
 quit()
