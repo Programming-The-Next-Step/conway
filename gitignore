@@ -10,3 +10,6 @@
 # Sutff 
 .ipynb_checkpoints
 __pycache__
+
+# The notebook 
+.ipynb
