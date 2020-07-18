@@ -4,7 +4,7 @@ import math
 import sys
 from pygame.locals import *
 
-pygame.init()
+####### The constants #######
 
 # Colors 
 grey = (210, 210, 210) # the grid lines 
@@ -20,148 +20,152 @@ bright_blue = (0, 191, 255)
 # The window
 window_width = 526
 window_height = 600 # leave some space below to add start and stop buttons
-screen = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption("Game of Life")
-
-# The clock
-clock = pygame.time.Clock()
 
 # The cells 
 cell_width = 20
 cell_height = 20
 margin = 1 # the margin between cell-cell and cell-window
 
-# Matrix to store on/off values
-N = 25 # found the number by trial and error 
-grid = np.zeros((N, N))    
+class Life: 
+    def __init__(self):
+        self.running = True
+        self.iterate = False
+        pygame.init()
+        screen = pygame.display.set_mode((window_width, window_height))
+        pygame.display.set_caption("Game of Life")
+        clock = pygame.time.Clock()
+        
+        # Matrix to store on/off values
+        self.N = 25 # found the number by trial and error 
+        self.grid = np.zeros((self.N, self.N))    
+        
+        while self.running == True:
+            clock.tick(60)
+            self.update()
+            self.draw(screen)
+            # always track the mouse position
+            mouse = pygame.mouse.get_pos() 
+            click = pygame.mouse.get_pressed()
 
-####### The functions #######
+            # change the screen coordinates to grid coordinates
+            i = mouse[1] // (cell_height + margin) # row number
+            j = mouse[0] // (cell_width + margin) # column number
 
-# Buttons 
-def initial(grid):
-    if grid[i][j] == 0:
-        grid[i][j] = 1
-    elif grid[i][j] == 1:
-        grid[i][j] = 0
-    return grid[i, j]
+            for event in pygame.event.get(): 
+                if event.type == pygame.QUIT: # stop the loop if the user closes the window 
+                    running = False
+                    pygame.quit()
+                    quit()
 
-def game(grid):
-    X = grid.copy()
-    for i in range(N):
-        for j in range(N):
-                # calculating the activation of a cell's 8 neighbors
-                total_activation = int(
-                    (X[i, (j - 1) % N] + 
-                     X[i, (j + 1) % N] + 
-                     X[(i - 1) % N, j] + 
-                     X[(i + 1) % N, j] +
-                     X[(i - 1) % N, (j - 1) % N] + 
-                     X[(i - 1) % N, (j + 1) % N] + 
-                     X[(i + 1) % N, (j - 1) % N] + 
-                     X[(i + 1) % N, (j + 1) % N])
-                )
-                # implementing Conway's 4 rules
-                if X[i, j] == 0:
-                    if total_activation == 3: # birth 
-                        grid[i, j] = 1
-                    else: 
-                        grid[i, j] = 0 # loneliness 
+                # change between dead-alive by clicking on the cells 
+                elif click[0] == 1:
+                    
+                    if 0 <= i <= (self.N - 1): 
+                        if self.grid[i][j] == 0:
+                            self.grid[i][j] = 1
+                        elif self.grid[i][j] == 1:
+                            self.grid[i][j] = 0
+
+                    elif 50 < mouse[0] < 50 + 100 and 538 < mouse[1] < 538 + 50:
+                        self.iterate = True 
                         
-                elif X[i, j] == 1:
-                    if (total_activation < 2) or (total_activation > 3): # loneliness & overcrowding 
-                        grid[i, j] = 0
-                    else:
-                        grid[i, j] = 1 # survival
-    return grid 
+                    elif 215 < mouse[0] < 215 + 100 and 538 < mouse[1] < 538 + 50:
+                        self.iterate = False
 
-def repeat(f, n, x):
-    if n == 1: # note 1, not 0
-        return f(x)
-    else:
-        return f(repeat(f, n-1, x)) # call f with returned value
-    
-running = True 
-while running:
-    
-    # always track the mouse position
-    mouse = pygame.mouse.get_pos() 
-    click = pygame.mouse.get_pressed()
-    
-    # change the screen coordinates to grid coordinates
-    i = mouse[1] // (cell_height + margin) # row number
-    j = mouse[0] // (cell_width + margin) # column number 
-    
-    for event in pygame.event.get(): 
-        if event.type == pygame.QUIT: # stop the loop if the user closes the window 
-            running = False
+                    # if the reset button is pressed, empty the grid 
+                    elif 376 < mouse[0] < 376 + 100 and 538 < mouse[1] < 538 + 50:
+                        self.iterate = False 
+                        for i in range(self.N):
+                            for j in range(self.N):
+                                self.grid[i, j] = 0
 
-        # change between dead-alive by clicking on the cells 
-        elif click[0] == 1 and 0 <= i <= (N - 1): 
-            initial(grid)
-        
-    # if the start button is clicked, start the game 
-    if click[0] == 1 and 50 < mouse[0] < 50 + 100 and 538 < mouse[1] < 538 + 50:
-        clock.tick(60)
-        game(grid)
-        #repeat(f = game, n = 10, x = grid) #repeat(f = game, n = 1, x = X) # iterates n times but only two are shown
-         
-        #elif click[0] == 1 and 215 < mouse[0] < 215 + 100 and 538 < mouse[1] < 538 + 50:
-            #playing == False
-        
-    # if the reset button is pressed, empty the grid 
-    elif click[0] == 1 and 376 < mouse[0] < 376 + 100 and 538 < mouse[1] < 538 + 50:
-        for i in range(N):
-            for j in range(N):
-                grid[i, j] = 0
- 
-    # Set the screen background
-    screen.fill(grey)
+           # Draw the buttons, bright if the mouse is on the button 
+            if 50 < mouse[0] < 50 + 100 and 538 < mouse[1] < 538 + 50:
+                pygame.draw.rect(screen, bright_green, (50, 538, 100, 50))
+            else: 
+                pygame.draw.rect(screen, green, (50, 538, 100, 50))
 
-    # Draw the grid based on the matrix values
-    for i in range(N):
-        for j in range(N):
-            if grid[i, j] == 0:
-                color = white
-            elif grid[i][j] == 1:
-                color = black
-            pygame.draw.rect(screen, color, ((cell_width + margin) * j + margin, # x-coordinates of the top-left hand corner 
-                                                             (cell_height + margin) * i + margin, # y-coordinates of the top-left hand corner
-                                                             cell_width, cell_height))
+            if 215 < mouse[0] < 215 + 100 and 538 < mouse [1] < 538 + 50:
+                pygame.draw.rect(screen, bright_red, (215, 538, 100, 50))
+            else:
+                pygame.draw.rect(screen, red, (215, 538, 100, 50))
 
-    # Draw the buttons, bright if the mouse is on the button 
-    if 50 < mouse[0] < 50 + 100 and 538 < mouse[1] < 538 + 50:
-        pygame.draw.rect(screen, bright_green, (50, 538, 100, 50))
-    else: 
-        pygame.draw.rect(screen, green, (50, 538, 100, 50))
-     
-    if 215 < mouse[0] < 215 + 100 and 538 < mouse [1] < 538 + 50:
-        pygame.draw.rect(screen, bright_red, (215, 538, 100, 50))
-    else:
-        pygame.draw.rect(screen, red, (215, 538, 100, 50))
-        
-    if 376 < mouse[0] < 376 + 100 and 538 < mouse [1] < 538 + 50:
-        pygame.draw.rect(screen, bright_blue, (376, 538, 100, 50))
-    else:
-        pygame.draw.rect(screen, blue, (376, 538, 100, 50))
+            if 376 < mouse[0] < 376 + 100 and 538 < mouse [1] < 538 + 50:
+                pygame.draw.rect(screen, bright_blue, (376, 538, 100, 50))
+            else:
+                pygame.draw.rect(screen, blue, (376, 538, 100, 50))
+
+            # Adding text to the buttons 
+            def text_objects(text, font):
+                textSurface = font.render(text, True, black)
+                return textSurface, textSurface.get_rect()
+
+            text = pygame.font.Font("freesansbold.ttf", 20)
+            textSurf_1, textRect_1 = text_objects("START", text)
+            textSurf_2, textRect_2 = text_objects("PAUSE", text)
+            textSurf_3, textRect_3 = text_objects("RESET", text)
+            textRect_1.center = ((50 + (100 / 2)), (538 + (50 / 2)))
+            textRect_2.center = ((215 + (100 / 2)), (538 + (50 / 2)))
+            textRect_3.center = ((376 + (100 / 2)), (538 + (50 / 2)))
+            screen.blit(textSurf_1, textRect_1)
+            screen.blit(textSurf_2, textRect_2)
+            screen.blit(textSurf_3, textRect_3)
+            # update the screen
+            pygame.display.update()
+            
+
+    def game(self):
+        """ Applies Conway's rules to the initial pattern and 
+        returns the updated grid. 
+        """
+        X = self.grid.copy()
+        for i in range(self.N):
+            for j in range(self.N):
+                    # calculating the activation of a cell's 8 neighbors
+                    total_activation = int(
+                        (X[i, (j - 1) % self.N] + 
+                         X[i, (j + 1) % self.N] + 
+                         X[(i - 1) % self.N, j] + 
+                         X[(i + 1) % self.N, j] +
+                         X[(i - 1) % self.N, (j - 1) % self.N] + 
+                         X[(i - 1) % self.N, (j + 1) % self.N] + 
+                         X[(i + 1) % self.N, (j - 1) % self.N] + 
+                         X[(i + 1) % self.N, (j + 1) % self.N])
+                    )
+                    # implementing Conway's 4 rules
+                    if X[i, j] == 0:
+                        if total_activation == 3: # birth 
+                            self.grid[i, j] = 1
+                        else: 
+                            self.grid[i, j] = 0 # loneliness 
+
+                    elif X[i, j] == 1:
+                        if (total_activation < 2) or (total_activation > 3): # loneliness & overcrowding 
+                            self.grid[i, j] = 0
+                        else:
+                            self.grid[i, j] = 1 # survival
     
-    # Adding text to the buttons 
+    def update(self):
+        if self.iterate:
+            self.game()
+
+    def draw(self, screen):
+        """ Draws the grid based on the matrix values. """
+        screen.fill(grey)
+        for i in range(self.N):
+            for j in range(self.N):
+                if self.grid[i, j] == 0:
+                    color = white
+                elif self.grid[i][j] == 1:
+                    color = black
+                pygame.draw.rect(screen, color, ((cell_width + margin) * j + margin, # x-coordinates of the top-left hand corner 
+                                                 (cell_height + margin) * i + margin, # y-coordinates of the top-left hand corner
+                                                 cell_width, cell_height))    
+    
     def text_objects(text, font):
+        """ Creates the text objects to be put on the buttons. """
         textSurface = font.render(text, True, black)
         return textSurface, textSurface.get_rect()
-
-    text = pygame.font.Font("freesansbold.ttf", 20)
-    textSurf_1, textRect_1 = text_objects("START", text)
-    textSurf_2, textRect_2 = text_objects("PAUSE", text)
-    textSurf_3, textRect_3 = text_objects("RESET", text)
-    textRect_1.center = ((50 + (100 / 2)), (538 + (50 / 2)))
-    textRect_2.center = ((215 + (100 / 2)), (538 + (50 / 2)))
-    textRect_3.center = ((376 + (100 / 2)), (538 + (50 / 2)))
-    screen.blit(textSurf_1, textRect_1)
-    screen.blit(textSurf_2, textRect_2)
-    screen.blit(textSurf_3, textRect_3)
-    
-    # update the screen
-    pygame.display.update()
-
-pygame.quit()
-quit()
+                
+if __name__ == "__main__":
+    Life()
