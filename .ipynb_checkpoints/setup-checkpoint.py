@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='conway',
       version='0.1',
-      description='A library that includes the Game of Life and the Doomsday rule algorithm by John Conway',
+      description='A library that includes the Game of Life created by John Conway',
       url='https://github.com/Programming-The-Next-Step/conway.git',
       author='Eren Asena',
       author_email='eren.asena@student.uva.nl',
@@ -18,7 +18,6 @@ setup(name='conway',
       install_requires=[
           'pygame',
           'numpy',
-          'math'
       ],
       test_suite='nose.collector',
       tests_require=['nose']

@@ -11,5 +11,3 @@ A cell is considered _alive_ if it is on, and _dead_ if it is off. The rules are
 2. _Survival_: a live cell with exactly two or three live neighbors stays alive at the next time step. 
 3. _Loneliness_: a live cell with fewer than two live neighbors dies and a dead cell with fewer than three live neighbors stays dead. 
 4. _Overcrowding_: a live or dead cell with more than three live neighbors dies or stays dead. 
-
-### How to use the software

@@ -1,0 +1,14 @@
+Metadata-Version: 1.2
+Name: conway
+Version: 0.1
+Summary: A library that includes the Game of Life created by John Conway
+Home-page: https://github.com/Programming-The-Next-Step/conway.git
+Author: Eren Asena
+Author-email: eren.asena@student.uva.nl
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.7.6
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
