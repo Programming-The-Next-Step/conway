@@ -30,5 +30,15 @@ def test_reset():
 def test_draw():
     s = life.draw(screen = pygame.display.set_mode((utilities.window_width, utilities.window_height)))
     assert isinstance(s, pygame.Rect)
+    
+# Test the number of alive cells in the initial patterns
+def test_initial():
+    cells = [5, 5, 9, 12] # the total number of live cells in each pattern 
+    for i, n in zip(range(1, 5), cells):
+        s = life.initial(pattern = i)
+        utilities.grid = np.zeros((utilities.N, utilities.N)) # reset the grid to use the function again 
+        assert isinstance(s, np.ndarray) and len(s[s == 1]) == n
+
+
 
 

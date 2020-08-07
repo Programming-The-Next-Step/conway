@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+import random as r 
 
 # Colors used to draw the buttons 
 grey = (210, 210, 210) # the grid lines 
@@ -46,10 +47,11 @@ class Life:
         Draws the button and runs the event loop while responding to
         which button is pressed. 
         """
-        pygame.init()
-        self.running = True
+        pygame.init() 
+        self.running = True # runs the while loop 
         screen = pygame.display.set_mode((window_width, window_height))
         pygame.display.set_caption("Game of Life")
+        self.initial() # sets the initial pattern when the window opens
         while self.running == True:
             self.update()
             self.draw(screen)
@@ -80,7 +82,7 @@ class Life:
                     elif 466 < mouse[0] < 466 + 100 and 725 < mouse[1] < 725 + 50:
                         self.iterate = False
                         self.reset()
-                        
+                    
            # Draw the buttons, bright if the mouse is on the button 
             if 140 < mouse[0] < 140 + 100 and 600 < mouse[1] < 725 + 50:
                 pygame.draw.rect(screen, bright_green, (140, 725, 100, 50))
@@ -141,6 +143,46 @@ class Life:
                             grid[i, j] = 1 # survival
         return grid
         
+    def initial(self, pattern = r.randrange(1, 5, 1), index = r.randrange(10, 50, 1)): # randomly pick a pattern and a location 
+        """ Randomly draws from four initial patterns
+        and turns the corresponding cells alive. Returns 
+        the grid with this starting pattern. The location
+        of the starting pattern is also determined randomly. 
+        
+        1 is the glider 
+        2 is the R-pentomino 
+        3 is the light-weighted space ship 
+        4 is the pentadecathlon
+        """
+        if pattern == 1: # glider 
+            grid[index, index] = 1
+            grid[index, index + 1] = 1
+            grid[index, index + 2] = 1
+            grid[index - 1, index + 2] = 1
+            grid[index - 2, index + 1] = 1
+        elif pattern == 2: # R-pentomino 
+            grid[index, index] = 1
+            grid[index + 1, index] = 1
+            grid[index + 2, index] = 1
+            grid[index + 1, index - 1] = 1
+            grid[index, index + 1] = 1
+        elif pattern == 3: # light-weight space ship
+            grid[index, index] = 1
+            grid[index, index + 1] = 1
+            grid[index, index + 2] = 1
+            grid[index, index + 3] = 1
+            grid[index - 1, index] = 1
+            grid[index - 2, index] = 1
+            grid[index - 3, index + 1] = 1
+            grid[index - 3, index + 4] = 1
+            grid[index - 1, index + 4] = 1
+        elif pattern == 4: # pentadecathlon
+            l = list(range(index, index + 10))
+            grid[index, [x for i, x in enumerate(l) if (i != 2 and i != 7)]] = 1
+            grid[index + 1, [index + 2, index + 7]] = 1
+            grid[index - 1, [index + 2, index + 7]] = 1
+        return grid
+        
     def update(self):
         """ If the user has pressed the start button,
         self.iterate becomes true. If iterating, this 
@@ -161,8 +203,8 @@ class Life:
                     color = white
                 elif grid[i][j] == 1:
                     color = black
-                rect = pygame.draw.rect(screen, color, ((cell_width + margin) * j + margin, # x-coordinates of top-left hand corner 
-                                                 (cell_height + margin) * i + margin, # y-coordinates of top-left hand corner
+                rect = pygame.draw.rect(screen, color, ((cell_width + margin) * j + margin, # x-coordinates of top-left corner 
+                                                 (cell_height + margin) * i + margin, # y-coordinates of top-left corner
                                                  cell_width, cell_height)) 
         return rect  
     
