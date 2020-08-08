@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
-import random as r
-import os
+import random as r 
+import os 
 
 # Colors used to draw the buttons 
 grey = (210, 210, 210) # the grid lines 
@@ -108,12 +108,12 @@ class Life:
                         self.reset()
                     
            # Draw the buttons, bright if the mouse is on the button 
-            if 140 < mouse[0] < 140 + 100 and 600 < mouse[1] < 725 + 50:
+            if 140 < mouse[0] < 140 + 100 and 725 < mouse[1] < 725 + 50:
                 pygame.draw.rect(screen, bright_green, (140, 725, 100, 50))
             else: 
                 pygame.draw.rect(screen, green, (140, 725, 100, 50))
 
-            if 305 < mouse[0] < 305 + 100 and 538 < mouse [1] < 725 + 50:
+            if 305 < mouse[0] < 305 + 100 and 725 < mouse [1] < 725 + 50:
                 pygame.draw.rect(screen, bright_red, (305, 725, 100, 50))
             else:
                 pygame.draw.rect(screen, red, (305, 725, 100, 50))
