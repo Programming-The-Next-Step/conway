@@ -1,5 +1,5 @@
 # conway
-[Documentation can be found here](julepcode.live/c5s)
+[Documentation can be found here](https://julepcode.com/build_doc.html?doc=conway_(Python)******QrmC2sBY15SJWepMyOOyJxOcrHy2)
 ![](https://upload.wikimedia.org/wikipedia/commons/e/e5/Gospers_glider_gun.gif)
 
 ## Game of Life 
