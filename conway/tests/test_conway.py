@@ -4,6 +4,7 @@ import mock
 from conway import utilities
 import pygame 
 import numpy as np
+import random as r
 
 # Create an instance of the game  
 life = utilities.Life()
