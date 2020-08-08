@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
-import random as r 
+import random as r
+import os
 
 # Colors used to draw the buttons 
 grey = (210, 210, 210) # the grid lines 
@@ -90,7 +91,7 @@ class Life:
                 if event.type == pygame.QUIT: # stop the loop if the user closes the window 
                     running = False
                     pygame.quit()
-                    quit()
+                    os._exit(0)
                 elif click[0] == 1: # if the mouse is clicked 
                     # change the cell state if the mouse is on the grid   
                     if 0 <= i <= (N - 1): 

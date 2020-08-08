@@ -18,6 +18,7 @@ setup(name='conway',
       install_requires=[
           'pygame',
           'numpy',
+          'os'
       ],
       test_suite='nose.collector',
       tests_require=['nose']
