@@ -26,32 +26,55 @@ cell_width = 10
 cell_height = 10
 margin = 1 # the margin between the cells
 
-class Life: 
+class Life:
+    """ 
+    A class for the cellular automaton Game of Life. It has 
+    two properties that determine whether the game is running
+    and whether Conway's rules are being iterated.
+    
+    Properties
+    ''''''''''
+    running: logical
+        If True, the game is run. The default is False. Is True 
+        when the main function play() is called. 
+    iterate: logical 
+        If True, the rules are applied to the grid and the Game of Life
+        evolves over generations. The default is False. Is on when the user 
+        clicks on the START button. Is False when the user clicks on the PAUSE 
+        or the RESET button.
+    """
     def __init__(self):
-        """ Creating two attributes both of which are logical. 
-        These determine whether the main game loop is running
-        and whether the rules are being iterated. They are both 
-        initiated as False and are changed when a specific method
-        is called or when the user clicks on a specific button. 
-        For example, if the main game function 'play' is called, 
-        running will be True and the event loop will begin. Iterate 
-        is True if the user clicks on the START button to start applying
-        Conway's rules. False if the game is paused or the grid is reset. 
+        """ 
+        Constructor for the Life class. Takes no arguments. 
         """
         self.running = False 
         self.iterate = False
                 
-    def play(self):
-        """ The main function. Initiates the game by creating the 
-        screen based on the predetermined, constant window size. 
-        Draws the button and runs the event loop while responding to
-        which button is pressed. 
+    def play(self, pattern = r.randrange(1, 5, 1)):
+        """ 
+        The main function of the game. Initiates the game by creating 
+        a screen with a constant window size. Draws the buttons and runs 
+        the event loop while responding to the buttons pressed. 
+        
+        Parameters 
+        
+        pattern 
+            Determines the initial pattern that appears on the 
+            screen when the game is started. It can take values between 
+            1 and 4. The correspondence between the arguments and the patterns: 
+        
+            1 = glider 
+            2 = R-pentomino 
+            3 = light-weighted space ship 
+            4 = pentadecathlon
+        
+            The default value is a randomly drawn integer. 
         """
         pygame.init() 
         self.running = True # runs the while loop 
         screen = pygame.display.set_mode((window_width, window_height))
         pygame.display.set_caption("Game of Life")
-        self.initial() # sets the initial pattern when the window opens
+        self.initial(pattern) # sets the initial pattern when the window opens
         while self.running == True:
             self.update()
             self.draw(screen)
@@ -113,7 +136,8 @@ class Life:
             pygame.display.update()
             
     def rules(self):
-        """ Applies Conway's rules to the matrix of cells
+        """ 
+        Applies Conway's rules to the matrix of cells
         and updates the matrix over generations. 
         """
         X = grid.copy()
@@ -143,17 +167,26 @@ class Life:
                             grid[i, j] = 1 # survival
         return grid
         
-    def initial(self, pattern = r.randrange(1, 5, 1), index = r.randrange(10, 50, 1)): # randomly pick a pattern and a location 
-        """ Randomly draws from four initial patterns
-        and turns the corresponding cells alive. Returns 
-        the grid with this starting pattern. The location
-        of the starting pattern is also determined randomly. 
+    def initial(self, pattern): 
+        """ 
+        Turns cells alive according to the pattern argument.
+        Returns the grid with the chosen initial pattern. The 
+        location of the pattern is chosen randomly by sampling 
+        from grid coordinates. The coordinates of the edges are 
+        excluded to make sure the pattern is fully visible. 
         
-        1 is the glider 
-        2 is the R-pentomino 
-        3 is the light-weighted space ship 
-        4 is the pentadecathlon
+        1 = glider 
+        2 = R-pentomino 
+        3 = light-weighted space ship 
+        4 = pentadecathlon
+        
+        Parameters 
+        
+        pattern 
+           Specified in the main function play(). 
+           The default is a random draw between 1 and 4. 
         """
+        index = r.randrange(10, 50, 1) # randomly pick a location 
         if pattern == 1: # glider 
             grid[index, index] = 1
             grid[index, index + 1] = 1
@@ -184,15 +217,17 @@ class Life:
         return grid
         
     def update(self):
-        """ If the user has pressed the start button,
-        self.iterate becomes true. If iterating, this 
-        function applies Conway's rules to the existing pattern.
+        """ 
+        This function applies Conway's rules to the current pattern if
+        the logical attribute iterate is True. iterate is True if the user 
+        has pressed the start button.  
         """
         if self.iterate:
             self.rules()
             
     def draw(self, screen):
-        """ Draws the grid based on the matrix values. 
+        """ 
+        Draws the grid based on the matrix values. 
         If the matrix value is 1, the cell is drawn black. 
         If the matrix value is 0, the cell is drawn white. 
         """
@@ -209,7 +244,8 @@ class Life:
         return rect  
     
     def state(self):
-        """ Uses mouse clicks to turn dead 
+        """ 
+        Uses mouse clicks to turn dead 
         cells live and kill live cells. 
         """
         if grid[i][j] == 0:
@@ -219,8 +255,10 @@ class Life:
         return grid 
             
     def reset(self):
-        """ Stops applying Conway's rules 
+        """ 
+        Stops iterating the rules 
         and kills all the cells. 
+        Returns an empty grid. 
         """
         for i in range(N):
             for j in range(N):
@@ -228,8 +266,9 @@ class Life:
         return grid 
                 
     def text_objects(self, text, font):
-        """ Creates a text surface which is later added 
-        to the start, pause and reset buttons. 
+        """ 
+        Creates a text surface which is later added 
+        to the START, PAUSE and RESET buttons. 
         """
         textSurface = font.render(text, True, black)
         return textSurface, textSurface.get_rect()
