@@ -1,4 +1,5 @@
 # conway
+[Documentation can be found here](julepcode.live/c5s)
 ![](https://upload.wikimedia.org/wikipedia/commons/e/e5/Gospers_glider_gun.gif)
 
 ## Game of Life 
